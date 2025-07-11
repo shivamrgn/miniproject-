@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>COCOMO Project Estimator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f8fb;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      padding: 30px;
+      background: white;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 25px;
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>COCOMO Project Estimator</h2>
+
+    <label for="projectType">Project Type:</label>
+    <select id="projectType">
+      <option value="organic">Organic</option>
+      <option value="semi">Semi-Detached</option>
+      <option value="embedded">Embedded</option>
+    </select>
+
+    <label for="kloc">KLOC (Thousands of Lines of Code):</label>
+    <input type="number" id="kloc" placeholder="Enter KLOC">
+
+    <label for="salary">Monthly Developer Salary:</label>
+    <input type="number" id="salary" placeholder="Enter Salary">
+
+    <button onclick="calculate()">Estimate Project</button>
+
+    <div class="result" id="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    function calculate() {
+      const type = document.getElementById('projectType').value;
+      const kloc = parseFloat(document.getElementById('kloc').value);
+      const salary = parseFloat(document.getElementById('salary').value);
+
+      let a1, a2, b1, b2;
+
+      // Set constants based on type
+      if (type === 'organic') {
+        a1 = 2.4; a2 = 1.05;
+        b1 = 2.5; b2 = 0.38;
+      } else if (type === 'semi') {
+        a1 = 3.0; a2 = 1.12;
+        b1 = 2.5; b2 = 0.35;
+      } else if (type === 'embedded') {
+        a1 = 3.6; a2 = 1.20;
+        b1 = 2.5; b2 = 0.32;
+      }
+
+      // Validate input
+      if (isNaN(kloc) || isNaN(salary) || kloc <= 0 || salary <= 0) {
+        alert("Please enter valid KLOC and salary values.");
+        return;
+      }
+
+      // Calculations
+      const effort = a1 * Math.pow(kloc, a2);
+      const timedev = b1 * Math.pow(effort, b2);
+      const cost = timedev * salary;
+
+      // Output
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = `
+        <h3>Estimation Result:</h3>
+        <p><strong>Effort:</strong> ${effort.toFixed(2)} person-months</p>
+        <p><strong>Time to Develop:</strong> ${timedev.toFixed(2)} months</p>
+        <p><strong>Estimated Cost:</strong> ₹${cost.toFixed(2)}</p>
+      `;
+    }
+  </script>
+</body>
+</html>
